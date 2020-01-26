@@ -1,6 +1,6 @@
 local Constants = require("constants")
 local Utils = require("utility/utils")
-local Logging = require("utility/logging")
+--local Logging = require("utility/logging")
 
 local function GetColorForSetting(oreColor, settingValue)
     if settingValue == "vanilla" then
@@ -39,13 +39,11 @@ for _, name in pairs(oreList) do
 end
 
 for _, oreName in pairs(oreList) do
-    Logging.LogPrint(oreName .. ":")
     local oreEntityColor = oreEntityColors[oreName]
     local oreMapColor = oreMapColors[oreName]
     local oreProto = data.raw["resource"][oreName]
 
     if entityColorModeSetting ~= "vanilla" then
-        Logging.LogPrint(Utils.TableContentsToJSON(oreEntityColor, "oreEntityColor"))
         local oreSheet = oreProto.stages.sheet
         oreSheet.filename = Constants.AssetModName .. "/graphics/dull-ore.png"
         oreSheet.tint = oreEntityColor
@@ -56,7 +54,6 @@ for _, oreName in pairs(oreList) do
 
     if mapColorModeSetting ~= "vanilla" then
         oreProto.map_color = oreMapColor
-        Logging.LogPrint(Utils.TableContentsToJSON(oreMapColor, "oreMapColor"))
         if mapColorModeSetting == "invisible" then
             oreProto.map_grid = false
         else
