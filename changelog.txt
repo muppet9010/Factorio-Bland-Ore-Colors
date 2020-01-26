@@ -1,2 +1,18 @@
-0.1.0
-	Initial Release
+---------------------------------------------------------------------------------------------------
+Version: 18.1.1
+Date: 2020-01-26
+  Features:
+    - Updated to Factorio 0.18
+    - Added separate options for ingame resource entity color porfile and minimap color profile
+    - Added minimap highlighting option so when hovering over an ore you can stop the whole patch being highlighted.
+  Changes:
+  Bugfixes:
+  Info:
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2019-02-13
+  Features:
+    - Initial Release
+  Changes:
+  Bugfixes:
+  Info:

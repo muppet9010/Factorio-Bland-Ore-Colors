@@ -1,48 +1,70 @@
 local Constants = require("constants")
+local Utils = require("utility/utils")
+local Logging = require("utility/logging")
 
-
-local colorModeSetting = settings.startup["color-mode"].value
-if colorModeSetting == "vanilla" then
-    return
+local function GetColorForSetting(oreColor, settingValue)
+    if settingValue == "vanilla" then
+        return oreColor
+    elseif settingValue == "dull" then
+        oreColor[4] = 0.8
+    elseif settingValue == "bland" then
+        local difR = (0.5 - oreColor[1]) / 4 * 3
+        oreColor[1] = oreColor[1] + difR
+        local difG = (0.5 - oreColor[2]) / 4 * 3
+        oreColor[2] = oreColor[2] + difG
+        local difB = (0.5 - oreColor[3]) / 4 * 3
+        oreColor[3] = oreColor[3] + difB
+        oreColor[4] = 0.8
+    elseif settingValue == "grey" then
+        oreColor = {0.3, 0.3, 0.3, 0.8}
+    elseif settingValue == "invisible" then
+        oreColor = {0, 0, 0, 0}
+    end
+    return oreColor
 end
 
+local entityColorModeSetting = settings.startup["bland_ore_colors-entity_color_mode"].value
+local mapColorModeSetting = settings.startup["bland_ore_colors-map_color_mode"].value
+local mapHighlightingSetting = settings.startup["bland_ore_colors-enable_map_highlighting"].value
 
 local oreList = {"iron-ore", "copper-ore", "coal", "stone", "uranium-ore"}
-local oreAlpha = 0.8
-local oresMapColor = {}
+local oreEntityColors, oreMapColors = {}, {}
 for _, name in pairs(oreList) do
-    oresMapColor[name] = data.raw["resource"][name].map_color
-    oresMapColor[name].a = oreAlpha
+    oreEntityColors[name] = Utils.DeepCopy(data.raw["resource"][name].map_color)
+    oreEntityColors[name] = GetColorForSetting(oreEntityColors[name], entityColorModeSetting)
+end
+for _, name in pairs(oreList) do
+    oreMapColors[name] = Utils.DeepCopy(data.raw["resource"][name].map_color)
+    oreMapColors[name] = GetColorForSetting(oreMapColors[name], mapColorModeSetting)
 end
 
+for _, oreName in pairs(oreList) do
+    Logging.LogPrint(oreName .. ":")
+    local oreEntityColor = oreEntityColors[oreName]
+    local oreMapColor = oreMapColors[oreName]
+    local oreProto = data.raw["resource"][oreName]
 
-if colorModeSetting == "bland" then
-    for ore, tint in pairs(oresMapColor) do
-        local difR = (0.5 - tint.r) / 4 * 3
-        oresMapColor[ore].r = tint.r + difR
-        local difG = (0.5 - tint.g) / 4 * 3
-        oresMapColor[ore].g = tint.g + difG
-        local difB = (0.5 - tint.b) / 4 * 3
-        oresMapColor[ore].b = tint.b + difB
+    if entityColorModeSetting ~= "vanilla" then
+        Logging.LogPrint(Utils.TableContentsToJSON(oreEntityColor, "oreEntityColor"))
+        local oreSheet = oreProto.stages.sheet
+        oreSheet.filename = Constants.AssetModName .. "/graphics/dull-ore.png"
+        oreSheet.tint = oreEntityColor
+        oreSheet.hr_version.filename = Constants.AssetModName .. "/graphics/hr-dull-ore.png"
+        oreSheet.hr_version.tint = oreEntityColor
+        oreProto.stages_effect = nil
     end
-elseif colorModeSetting == "grey" then
-    for ore in pairs(oresMapColor) do
-        oresMapColor[ore] = {r=0.3, g=0.3, b=0.3, a=0.8}
-    end
-elseif colorModeSetting == "invisible" then
-    for ore in pairs(oresMapColor) do
-        oresMapColor[ore] = {r=0, g=0, b=0, a=0}
-    end
-end
 
+    if mapColorModeSetting ~= "vanilla" then
+        oreProto.map_color = oreMapColor
+        Logging.LogPrint(Utils.TableContentsToJSON(oreMapColor, "oreMapColor"))
+        if mapColorModeSetting == "invisible" then
+            oreProto.map_grid = false
+        else
+            oreProto.map_grid = true
+        end
+    end
 
-for ore, tint in pairs(oresMapColor) do
-    local oreProto = data.raw["resource"][ore]
-    oreProto.map_color = tint
-    local oreSheet = oreProto.stages.sheet
-    oreSheet.filename = Constants.AssetModName .. "/graphics/dull-ore.png"
-    oreSheet.tint = tint
-    oreSheet.hr_version.filename = Constants.AssetModName .. "/graphics/hr-dull-ore.png"
-    oreSheet.hr_version.tint = tint
-    oreProto.stages_effect = nil
+    if not mapHighlightingSetting then
+        oreProto.resource_patch_search_radius = false
+    end
 end
