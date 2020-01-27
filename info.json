@@ -1,6 +1,6 @@
 {
     "name": "bland_ore_colors",
-    "version": "18.1.1",
+    "version": "18.1.2",
     "title": "Bland Ore Colors",
     "author": "Muppet9010",
     "contact": "",
@@ -9,5 +9,5 @@
     "dependencies": [
         "base >= 0.18"
     ],
-    "description": "Makes the base game ores blander colors"
+    "description": "Lets you independently control ore colors ingame and in the minimap, including making them invisible!"
 }
