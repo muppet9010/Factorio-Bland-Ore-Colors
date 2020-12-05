@@ -1,13 +1,13 @@
 {
     "name": "bland_ore_colors",
-    "version": "18.1.2",
+    "version": "20.1.2",
     "title": "Bland Ore Colors",
     "author": "Muppet9010",
     "contact": "",
     "homepage": "",
-    "factorio_version": "0.18",
+    "factorio_version": "1.1",
     "dependencies": [
-        "base >= 0.18"
+        "base >= 1.1.0"
     ],
     "description": "Lets you independently control ore colors ingame and in the minimap, including making them invisible!"
 }
