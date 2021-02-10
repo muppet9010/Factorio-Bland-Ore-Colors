@@ -8,13 +8,16 @@ local function GetColorForSetting(oreColor, settingValue)
     elseif settingValue == "dull" then
         oreColor[4] = 0.8
     elseif settingValue == "bland" then
-        local difR = (0.5 - oreColor[1]) / 4 * 3
-        oreColor[1] = oreColor[1] + difR
-        local difG = (0.5 - oreColor[2]) / 4 * 3
-        oreColor[2] = oreColor[2] + difG
-        local difB = (0.5 - oreColor[3]) / 4 * 3
-        oreColor[3] = oreColor[3] + difB
-        oreColor[4] = 0.8
+        local function CalcBlandColor(oreColor)
+            local dif = (0.5 - oreColor) / 4 * 3
+            return oreColor + dif
+        end
+        oreColor = {
+            CalcBlandColor(oreColor[1] or oreColor.r),
+            CalcBlandColor(oreColor[2] or oreColor.g),
+            CalcBlandColor(oreColor[3] or oreColor.b),
+            0.8
+        }
     elseif settingValue == "grey" then
         oreColor = {0.3, 0.3, 0.3, 0.8}
     elseif settingValue == "invisible" then
