@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 20.1.3
+Date: 2021-02-14
+  Features:
+  Changes:
+    - Move data changes to the data-update stage to run after other mods may have changed the ore colors. PR by out_ouk.
+  Bugfixes:
+    - Support ore map color tables being numericly indexed rather than alphabet letter indexed. PR by out_ouk.
+  Info:
+---------------------------------------------------------------------------------------------------
 Version: 20.1.2
 Date: 2020-12-05
   Features:
