@@ -30,8 +30,20 @@ local entityColorModeSetting = settings.startup["bland_ore_colors-entity_color_m
 local mapColorModeSetting = settings.startup["bland_ore_colors-map_color_mode"].value
 local mapHighlightingSetting = settings.startup["bland_ore_colors-enable_map_highlighting"].value
 
-local oreList = {"iron-ore", "copper-ore", "coal", "stone", "uranium-ore"}
+local ore_box = {{-0.5, -0.5}, {0.5, 0.5}}
+local oreList = {"coal", "stone"}
 local oreEntityColors, oreMapColors = {}, {}
+
+for name, ore in pairs(data.raw["resource"]) do
+    if string.match(name,"-ore%d*") ~= nil then
+        if string.match(name, "infinite") == nil then
+            if table_compare(ore.selection_box, ore_box) then
+                table.insert(oreList, name)
+            end
+        end
+    end
+end
+
 for _, name in pairs(oreList) do
     oreEntityColors[name] = Utils.DeepCopy(data.raw["resource"][name].map_color)
     oreEntityColors[name] = GetColorForSetting(oreEntityColors[name], entityColorModeSetting)
@@ -50,8 +62,10 @@ for _, oreName in pairs(oreList) do
         local oreSheet = oreProto.stages.sheet
         oreSheet.filename = Constants.AssetModName .. "/graphics/dull-ore.png"
         oreSheet.tint = oreEntityColor
-        oreSheet.hr_version.filename = Constants.AssetModName .. "/graphics/hr-dull-ore.png"
-        oreSheet.hr_version.tint = oreEntityColor
+        if oreSheet.hr_version ~= nil then
+            oreSheet.hr_version.filename = Constants.AssetModName .. "/graphics/hr-dull-ore.png"
+            oreSheet.hr_version.tint = oreEntityColor
+        end
         oreProto.stages_effect = nil
     end
 
