@@ -36,8 +36,10 @@ local oreEntityColors, oreMapColors = {}, {}
 
 for name, ore in pairs(data.raw["resource"]) do
     if string.match(name,"-ore%d*") ~= nil then
-        if table_compare(ore.selection_box, ore_box) then
-            table.insert(oreList, name)
+        if string.match(name, "infinite") == nil then
+            if table_compare(ore.selection_box, ore_box) then
+                table.insert(oreList, name)
+            end
         end
     end
 end
